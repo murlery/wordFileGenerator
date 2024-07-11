@@ -2,6 +2,8 @@ from docxtpl import DocxTemplate
 from docx import Document
 import os
 def generate_protocol(filename):
+  if os.path.exists(filename):
+    raise FileExistsError(f"Файл с именем {filename} уже существует!")
   template_path = os.path.join(os.path.dirname(__file__), "template.docx")  
   doc = DocxTemplate(template_path)
   context = {
@@ -41,10 +43,12 @@ def generate_protocol(filename):
   }
   doc.render(context)
   doc.save(filename)
-if __name__ == '__main__': 
+if __name__ == "__main__":
   filename = input("Введите имя файла для сохранения (например, protocol.docx): ")
-  generate_protocol(filename)
-  print(f"Файл {filename} успешно создан!")
-  
+  try:
+    generate_protocol(filename)
+    print(f"Файл {filename} успешно создан!")
+  except FileExistsError as e:
+    print(f"Ошибка: {e}") 
   
   
