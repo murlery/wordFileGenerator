@@ -1,48 +1,85 @@
 from docxtpl import DocxTemplate
 from docx import Document
 import os
+def get_context_from_params(args):
+  context = {
+    'protocolNumber': args.get('protocolNumber'),
+    'date': args.get('date'),
+    'month': args.get('month'),
+    'year': args.get('year'),
+    'workType': args.get('workType'),
+    'surnameNamePatronymic': args.get('surnameNamePatronymic'),
+    'institute': args.get('institute'),
+    'formOfEducation': args.get('formOfEducation'),
+    'codeNameOfDirection': args.get('codeNameOfDirection'),
+    'nameOfProfile': args.get('nameOfProfile'),
+    'topic': args.get('topic'),
+    'ChairmanOfGEC': args.get('ChairmanOfGEC'),
+    'firstMemberOfGEC': args.get('firstMemberOfGEC'),
+    'secondMemberOfGEC': args.get('secondMemberOfGEC'),
+    'thirdMemberOfGEC': args.get('thirdMemberOfGEC'),
+    'fourthMemberOfGEC': args.get('fourthMemberOfGEC'),
+    'fifthMemberOfGEC': args.get('fifthMemberOfGEC'),
+    'headOfFQW': args.get('headOfFQW'),
+    'consultants': args.get('consultants'),
+    'pagesFQW': args.get('pagesFQW'),
+    'pagesAppendix': args.get('pagesAppendix'),
+    'AssesmentOfHead': args.get('AssesmentOfHead'),
+    'questions': args.get('questions'),
+    'averegeMark': args.get('averegeMark'),
+    'opinion': args.get('opinion'),
+    'disadvantages': args.get('disadvantages'),
+    'mark': args.get('mark'),
+    'fullAeregeMark': args.get('fullAeregeMark'),
+    'fullName': args.get('fullName'),
+    'Distinction': args.get('Distinction'),
+    'surnameNPChairman': args.get('surnameNPChairman'),
+    'surnameNPSecretary': args.get('surnameNPSecretary')
+  }
+  return context
 def generate_protocol(filename):
   if os.path.exists(filename):
     raise FileExistsError(f"Файл с именем {filename} уже существует!")
   template_path = os.path.join(os.path.dirname(__file__), "template.docx")  
   doc = DocxTemplate(template_path)
-  context = {
-    'protocol_number': input("Введите номер протокола: "),
-    'date': input("Введите число даты: "),
-    'month': input("Введите месяц даты: "),
-    'year': input("Введите последние 2 цифры года : "),
-    'work_type': input("Введите вид ВКР: "),
-    'surname': input("Введите фамилию студента: "),
-    'name_patronymic': input("Введите имя и отчество студента: "),
-    'institute': input("Введите институт: "),
-    'formOfEducation': input("Введите форму обучения: "),
-    'code_name_of_direction': input("Введите код и наименование направления подготовки: "),
-    'nameOfProfile': input("Введите наименование профиля: "),
-    'topic': input("Введите тему: "),
-    'ChairmanOfGEC': input("Введите председателя гэк: "),
-    'firstMemberOfGEC': input("Введите первого члена: "),
-    'secondMemberOfGEC': input("Введите второго члена: "),
-    'thirdMemberOfGEC': input("Введите третьего члена: "),
-    'fourthMemberOfGEC': input("Введите четвёртого члена: "),
-    'fifthMemberOfGEC': input("Введите пятого члена: "),
-    'headOfFQW': input("Введите руководителя ВКР: "),
-    'consultants': input("Введите консультантов: "),
-    'pagesFQW': input("Введите количество страниц ВКР: "),
-    'pagesAppendix': input("Введите количество страниц Чертежей/таблиц: "),
-    'AssesmentOfHead': input("Введите отзыв руководителя ВКР: "),
-    'questions': input("Введите вопросы: "),
-    'averegeMark': input("Введите средний балл: "),
-    'opinion': input("Введите мнение предсидателя: "),
-    'disadvantages': input("Введите недостатки: "),
-    'mark': input("Введите оценку прописью: "),
-    'fullAeregeMark': input("Введите полную оценку: "),
-    'fullName': input("Введите ФИО: "),
-    'Distinction': input("Введите с отличием/без отличия: "),
-    'surnameNPChairman': input("Введите председателя: "),
-    'surnameNPSecretary': input("Введите секветаря: ")
+  args = {
+    'protocolNumber': None,
+    'date': None,
+    'month': None,
+    'year': None,
+    'workType': None,
+    'surnameNamePatronymic': None,
+    'institute': None,
+    'formOfEducation': None,
+    'codeNameOfDirection': None,
+    'nameOfProfile': None,
+    'topic': None,
+    'ChairmanOfGEC': None,
+    'firstMemberOfGEC': None,
+    'secondMemberOfGEC': None,
+    'thirdMemberOfGEC': None,
+    'fourthMemberOfGEC': None,
+    'fifthMemberOfGEC': None,
+    'headOfFQW': None,
+    'consultants': None,
+    'pagesFQW': None,
+    'pagesAppendix': None,
+    'AssesmentOfHead': None,
+    'questions': None,
+    'averegeMark': None,
+    'opinion': None,
+    'disadvantages': None,
+    'mark': None,
+    'fullAeregeMark': None,
+    'fullName': None,
+    'Distinction': None,
+    'surnameNPChairman': None,
+    'surnameNPSecretary': None
   }
+  context = get_context_from_params(args)
   doc.render(context)
   doc.save(filename)
+  return context
 if __name__ == "__main__":
   filename = input("Введите имя файла для сохранения (например, protocol.docx): ")
   try:
@@ -50,5 +87,4 @@ if __name__ == "__main__":
     print(f"Файл {filename} успешно создан!")
   except FileExistsError as e:
     print(f"Ошибка: {e}") 
-  
   
