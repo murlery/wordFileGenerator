@@ -1,7 +1,7 @@
 from docxtpl import DocxTemplate
 from docx import Document
 import os
-def get_context_from_params(args):
+def get_context(args):
   context = {
     'protocolNumber': args.get('protocolNumber'),
     'date': args.get('date'),
@@ -21,7 +21,7 @@ def get_context_from_params(args):
     'fourthMemberOfGEC': args.get('fourthMemberOfGEC'),
     'fifthMemberOfGEC': args.get('fifthMemberOfGEC'),
     'headOfFQW': args.get('headOfFQW'),
-    'consultants': args.get('consultants'),
+    'consultants': "\n".join(args.get('consultants', [])),
     'pagesFQW': args.get('pagesFQW'),
     'pagesAppendix': args.get('pagesAppendix'),
     'AssesmentOfHead': args.get('AssesmentOfHead'),
@@ -61,7 +61,7 @@ def generate_protocol(filename):
     'fourthMemberOfGEC': None,
     'fifthMemberOfGEC': None,
     'headOfFQW': None,
-    'consultants': None,
+    'consultants': ['None', 'None', 'None'],
     'pagesFQW': None,
     'pagesAppendix': None,
     'AssesmentOfHead': None,
@@ -76,7 +76,7 @@ def generate_protocol(filename):
     'surnameNPChairman': None,
     'surnameNPSecretary': None
   }
-  context = get_context_from_params(args)
+  context = get_context(args)
   doc.render(context)
   doc.save(filename)
   return context
