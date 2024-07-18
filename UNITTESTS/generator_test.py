@@ -1,24 +1,58 @@
 
 import unittest
 from unittest.mock import patch
+from unittest.mock import patch, Mock
 from  generator import get_context, generate_protocol  # Замените "your_module" на имя вашего модуля
+import os
+from docxtpl import DocxTemplate
 
 class TestGenerateProtocol(unittest.TestCase):
-
-    @patch('os.path.exists')
-    @patch('os.path.join')
-    @patch('docxtempl.DocxTemplate')
-    @patch('docx.Document')
-    def test_generate_protocol_creates_file(self, mock_Document, mock_DocxTemplate, mock_os_path_join, mock_os_path_exists):
-        mock_os_path_exists.return_value = False  # Эмулируем, что файл не существует
+    def test_generate_protocol_with_valid_filename(self):
         filename = "test_protocol.docx"
-        mock_os_path_join.return_value = "template.docx"  # Эмулируем путь к шаблону
+        expected_context = {
+                    'protocolNumber': None,
+                    'date': None,
+                    'month': None,
+                    'year': None,
+                    'workType': None,
+                    'surnameNamePatronymic': None,
+                    'institute': None,
+                    'formOfEducation': None,
+                    'codeNameOfDirection': None,
+                    'nameOfProfile': None,
+                    'topic': None,
+                    'ChairmanOfGEC': None,
+                    'firstMemberOfGEC': None,
+                    'secondMemberOfGEC': None,
+                    'thirdMemberOfGEC': None,
+                    'fourthMemberOfGEC': None,
+                    'fifthMemberOfGEC': None,
+                    'headOfFQW': None,
+                    'consultants': 'None\nNone\nNone', 
+                    'pagesFQW': None,
+                    'pagesAppendix': None,
+                    'AssesmentOfHead': None,
+                    'questions': None,
+                    'averegeMark': None,
+                    'opinion': None,
+                    'disadvantages': None,
+                    'mark': None,
+                    'fullAeregeMark': None,
+                    'fullName': None,
+                    'Distinction': None,
+                    'surnameNPChairman': None,
+                    'surnameNPSecretary': None
+                }
 
-        generate_protocol(filename)
-
-        mock_DocxTemplate.assert_called_once_with("template.docx")
-        mock_DocxTemplate.return_value.render.assert_called_once()
-        mock_DocxTemplate.return_value.save.assert_called_once_with(filename)
+        with patch('docxtpl.DocxTemplate.render') as mock_render, patch('docxtpl.DocxTemplate.save') as mock_save:
+            mock_render.return_value = Mock()  # Mock the render method
+            context = generate_protocol(filename)
+            self.assertTrue(os.path.exists(filename))  # Check that the file was created
+            mock_render.assert_called_once()
+            mock_save.assert_called_once_with(filename)
+            self.assertEqual(context, expected_context)
+        if os.path.exists(filename):
+            os.remove(filename)
 
     @patch('os.path.exists')
     def test_generate_protocol_raises_file_exists_error(self, mock_os_path_exists):
