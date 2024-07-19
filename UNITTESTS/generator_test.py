@@ -40,27 +40,24 @@ class TestGenerateProtocol(unittest.TestCase):
             'surnameNPChairman': None,
             'surnameNPSecretary': None
         }
-
+#
         with patch('generator.DocxTemplate') as MockDocxTemplate:
-            mock_doc = MockDocxTemplate.return_value  # Mock instance of DocxTemplate
+            mock_doc = MockDocxTemplate.return_value
             mock_doc.render = Mock()
             mock_doc.save = Mock()
 
             context = generate_protocol(filename)
-
-            # Check that the file was created
             self.assertTrue(mock_doc.render.called)
             self.assertTrue(mock_doc.save.called)
             mock_doc.save.assert_called_once_with(filename)
             self.assertEqual(context, expected_context)
 
-        # Clean up any generated files
         if os.path.exists(filename):
             os.remove(filename)
 
     @patch('os.path.exists')
     def test_generate_protocol_raises_file_exists_error(self, mock_os_path_exists):
-        mock_os_path_exists.return_value = True  # Emulate that the file already exists
+        mock_os_path_exists.return_value = True
         filename = "test_protocol.docx"
 
         with self.assertRaises(FileExistsError) as context:
