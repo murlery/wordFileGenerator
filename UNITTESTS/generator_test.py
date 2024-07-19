@@ -1,62 +1,66 @@
-
 import unittest
-from unittest.mock import patch
 from unittest.mock import patch, Mock
-from  generator import get_context, generate_protocol  # Замените "your_module" на имя вашего модуля
+from generator import get_context, generate_protocol
 import os
-from docxtpl import DocxTemplate
 
 class TestGenerateProtocol(unittest.TestCase):
     def test_generate_protocol_with_valid_filename(self):
         filename = "test_protocol.docx"
         expected_context = {
-                    'protocolNumber': None,
-                    'date': None,
-                    'month': None,
-                    'year': None,
-                    'workType': None,
-                    'surnameNamePatronymic': None,
-                    'institute': None,
-                    'formOfEducation': None,
-                    'codeNameOfDirection': None,
-                    'nameOfProfile': None,
-                    'topic': None,
-                    'ChairmanOfGEC': None,
-                    'firstMemberOfGEC': None,
-                    'secondMemberOfGEC': None,
-                    'thirdMemberOfGEC': None,
-                    'fourthMemberOfGEC': None,
-                    'fifthMemberOfGEC': None,
-                    'headOfFQW': None,
-                    'consultants': 'None\nNone\nNone', 
-                    'pagesFQW': None,
-                    'pagesAppendix': None,
-                    'AssesmentOfHead': None,
-                    'questions': None,
-                    'averegeMark': None,
-                    'opinion': None,
-                    'disadvantages': None,
-                    'mark': None,
-                    'fullAeregeMark': None,
-                    'fullName': None,
-                    'Distinction': None,
-                    'surnameNPChairman': None,
-                    'surnameNPSecretary': None
-                }
+            'protocolNumber': None,
+            'date': None,
+            'month': None,
+            'year': None,
+            'workType': None,
+            'surnameNamePatronymic': None,
+            'institute': None,
+            'formOfEducation': None,
+            'codeNameOfDirection': None,
+            'nameOfProfile': None,
+            'topic': None,
+            'ChairmanOfGEC': None,
+            'firstMemberOfGEC': None,
+            'secondMemberOfGEC': None,
+            'thirdMemberOfGEC': None,
+            'fourthMemberOfGEC': None,
+            'fifthMemberOfGEC': None,
+            'headOfFQW': None,
+            'consultants': 'None\nNone\nNone',
+            'pagesFQW': None,
+            'pagesAppendix': None,
+            'AssesmentOfHead': None,
+            'questions': None,
+            'averegeMark': None,
+            'opinion': None,
+            'disadvantages': None,
+            'mark': None,
+            'fullAeregeMark': None,
+            'fullName': None,
+            'Distinction': None,
+            'surnameNPChairman': None,
+            'surnameNPSecretary': None
+        }
 
-        with patch('docxtpl.DocxTemplate.render') as mock_render, patch('docxtpl.DocxTemplate.save') as mock_save:
-            mock_render.return_value = Mock()  # Mock the render method
+        with patch('generator.DocxTemplate') as MockDocxTemplate:
+            mock_doc = MockDocxTemplate.return_value  # Mock instance of DocxTemplate
+            mock_doc.render = Mock()
+            mock_doc.save = Mock()
+
             context = generate_protocol(filename)
-            self.assertTrue(os.path.exists(filename))  # Check that the file was created
-            mock_render.assert_called_once()
-            mock_save.assert_called_once_with(filename)
+
+            # Check that the file was created
+            self.assertTrue(mock_doc.render.called)
+            self.assertTrue(mock_doc.save.called)
+            mock_doc.save.assert_called_once_with(filename)
             self.assertEqual(context, expected_context)
+
+        # Clean up any generated files
         if os.path.exists(filename):
             os.remove(filename)
 
     @patch('os.path.exists')
     def test_generate_protocol_raises_file_exists_error(self, mock_os_path_exists):
-        mock_os_path_exists.return_value = True  # Эмулируем, что файл уже существует
+        mock_os_path_exists.return_value = True  # Emulate that the file already exists
         filename = "test_protocol.docx"
 
         with self.assertRaises(FileExistsError) as context:
@@ -133,6 +137,6 @@ class TestGenerateProtocol(unittest.TestCase):
         self.assertEqual(context['Distinction'], 'С отличием')
         self.assertEqual(context['surnameNPChairman'], 'Петров П.П.')
         self.assertEqual(context['surnameNPSecretary'], 'Сидоров С.С.')
-    
+
 if __name__ == '__main__':
     unittest.main()
